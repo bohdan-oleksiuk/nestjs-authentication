@@ -5,9 +5,11 @@ import { TodoModule } from './todo/todo.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IamModule } from './iam/iam.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TodoModule,
     UserModule,
     TypeOrmModule.forRoot({
