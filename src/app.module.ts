@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IamModule } from './iam/iam.module';
 import { ConfigModule } from '@nestjs/config';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -17,13 +18,14 @@ import { ConfigModule } from '@nestjs/config';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '1111',
-      database: 'auth',
+      password: 'pass123',
+      database: 'postgres',
       autoLoadEntities: true,
       synchronize: true,
       logger: 'debug',
     }),
     IamModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
