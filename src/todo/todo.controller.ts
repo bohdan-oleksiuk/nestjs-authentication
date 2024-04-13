@@ -17,6 +17,8 @@ import { AuthType } from '../iam/authentication/enums/auth-type.enum';
 import { Auth } from '../iam/authentication/decorators/auth.decorator';
 import { Permission } from '../iam/authorization/permission.type';
 import { Permissions } from '../iam/authorization/decorators/permissions.decorator';
+import { Policies } from '../iam/authorization/decorators/policies.decorator';
+import { FrameworkContributorPolicy } from '../iam/authorization/policies/framework-contributor.policy';
 
 @ApiTags('Todo')
 @ApiBearerAuth()
@@ -37,6 +39,10 @@ export class TodoController {
     return this.todoService.findAll();
   }
 
+  @Policies(
+    new FrameworkContributorPolicy(),
+    /**, new MinAgePolicy(18), new ETC()  */
+  )
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.todoService.findOne(+id);

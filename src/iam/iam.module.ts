@@ -15,6 +15,9 @@ import { RedisModule } from '../redis/redis.module';
 import { Role } from '../role/entities/role.entity';
 import { RolesGuard } from './authorization/guards/roles.guard';
 import { PermissionsGuard } from './authorization/guards/permissions.guard';
+import { PoliciesGuard } from './authorization/guards/policies.guard';
+import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.storage';
+import { FrameworkContributorPolicyHandler } from './authorization/policies/framework-contributor.policy';
 
 @Module({
   imports: [
@@ -40,6 +43,12 @@ import { PermissionsGuard } from './authorization/guards/permissions.guard';
       provide: APP_GUARD,
       useClass: PermissionsGuard,
     },
+    {
+      provide: APP_GUARD,
+      useClass: PoliciesGuard,
+    },
+    PolicyHandlerStorage,
+    FrameworkContributorPolicyHandler,
     AccessTokenGuard,
     AuthenticationService,
   ],
