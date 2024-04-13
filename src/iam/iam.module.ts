@@ -9,8 +9,8 @@ import { JwtModule } from '@nestjs/jwt';
 import jwtConfig from './config/jwt.config';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthenticationGuard } from './authentication/authentication/authentication.guard';
-import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
+import { AuthenticationGuard } from './authentication/guards/authentication.guard';
+import { AccessTokenGuard } from './authentication/guards/access-token.guard';
 import { RedisModule } from '../redis/redis.module';
 import { Role } from '../role/entities/role.entity';
 import { RolesGuard } from './authorization/guards/roles.guard';
@@ -20,6 +20,7 @@ import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.s
 import { FrameworkContributorPolicyHandler } from './authorization/policies/framework-contributor.policy';
 import { GoogleAuthenticationController } from "./authentication/social/google-authentication.controller";
 import { GoogleAuthenticationService } from "./authentication/social/google-authentication.service";
+import { OtpAuthenticationService } from "./authentication/opt-authentication/opt-authentication.service";
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { GoogleAuthenticationService } from "./authentication/social/google-auth
     AccessTokenGuard,
     AuthenticationService,
     GoogleAuthenticationService,
+    OtpAuthenticationService
   ],
   controllers: [AuthenticationController, GoogleAuthenticationController],
 })

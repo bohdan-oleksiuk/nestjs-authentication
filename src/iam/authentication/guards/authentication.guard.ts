@@ -4,7 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AccessTokenGuard } from '../guards/access-token/access-token.guard';
+import { AccessTokenGuard } from './access-token.guard';
 import { Reflector } from '@nestjs/core';
 import { AuthType } from '../enums/auth-type.enum';
 import { AUTH_TYPE_KEY } from '../decorators/auth.decorator';

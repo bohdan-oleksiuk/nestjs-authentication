@@ -12,14 +12,22 @@ import { SignInDto } from './dto/sign-in.dto';
 import { Response } from 'express';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type.enum';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { OtpAuthenticationService } from "./opt-authentication/opt-authentication.service";
+import { ActiveUser } from "../decorators/active-user.decorator";
+import { ActiveUserData } from "../interfaces/active-user-data.interface";
+import { toFileStream } from "qrcode";
 
 @ApiTags('Authentication')
+@ApiBearerAuth()
 @Auth(AuthType.None)
 @Controller('authentication')
 export class AuthenticationController {
-  constructor(private readonly authService: AuthenticationService) {}
+  constructor(
+    private readonly authService: AuthenticationService,
+    private readonly otpAuthService: OtpAuthenticationService,
+  ) {}
 
   @ApiOperation({ summary: 'sign-up' })
   @Post('sign-up')
@@ -54,5 +62,20 @@ export class AuthenticationController {
   @Post('refresh-tokens')
   refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshTokens(refreshTokenDto);
+  }
+
+  @Auth(AuthType.Bearer)
+  @HttpCode(HttpStatus.OK)
+  @Post('2fa/generate')
+  async generateQrCode(
+    @ActiveUser() activeUser: ActiveUserData,
+    @Res() response: Response
+  ) {
+    const { secret, uri } = await this.otpAuthService.generateSecret(
+      activeUser.email,
+    );
+    await this.otpAuthService.enableTfaForUser(activeUser.email, secret);
+    response.type( 'png');
+    return toFileStream(response, uri);
   }
 }
