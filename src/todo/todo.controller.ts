@@ -1,11 +1,11 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
-  Patch,
   Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -22,7 +22,7 @@ import { FrameworkContributorPolicy } from '../iam/authorization/policies/framew
 
 @ApiTags('Todo')
 @ApiBearerAuth()
-@Auth(AuthType.Bearer, AuthType.ApiKey)
+@Auth(AuthType.Bearer)
 @Controller('todo')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}

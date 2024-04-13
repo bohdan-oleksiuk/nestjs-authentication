@@ -5,11 +5,11 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import jwtConfig from '../../config/jwt.config';
+import jwtConfig from '../../../config/jwt.config';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import { Request } from 'express';
-import { REQUEST_USER_KEY } from '../../iam.constants';
+import { REQUEST_USER_KEY } from '../../../iam.constants';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
