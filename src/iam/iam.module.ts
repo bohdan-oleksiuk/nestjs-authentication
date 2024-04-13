@@ -18,6 +18,8 @@ import { PermissionsGuard } from './authorization/guards/permissions.guard';
 import { PoliciesGuard } from './authorization/guards/policies.guard';
 import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.storage';
 import { FrameworkContributorPolicyHandler } from './authorization/policies/framework-contributor.policy';
+import { GoogleAuthenticationController } from "./authentication/social/google-authentication.controller";
+import { GoogleAuthenticationService } from "./authentication/social/google-authentication.service";
 
 @Module({
   imports: [
@@ -51,7 +53,8 @@ import { FrameworkContributorPolicyHandler } from './authorization/policies/fram
     FrameworkContributorPolicyHandler,
     AccessTokenGuard,
     AuthenticationService,
+    GoogleAuthenticationService,
   ],
-  controllers: [AuthenticationController],
+  controllers: [AuthenticationController, GoogleAuthenticationController],
 })
 export class IamModule {}

@@ -18,6 +18,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  googleId: string;
+
   @ManyToMany(() => Role, (role) => role.users)
   @JoinTable()
   roles: Role[];
