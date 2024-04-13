@@ -8,6 +8,7 @@ import { IamModule } from './iam/iam.module';
 import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
 import { RoleModule } from './role/role.module';
+import { ApiKeyModule } from './api-key/api-key.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { RoleModule } from './role/role.module';
     IamModule,
     RedisModule,
     RoleModule,
+    ApiKeyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
