@@ -15,6 +15,8 @@ import { ActiveUser } from '../iam/decorators/active-user.decorator';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthType } from '../iam/authentication/enums/auth-type.enum';
 import { Auth } from '../iam/authentication/decorators/auth.decorator';
+import { Permission } from '../iam/authorization/permission.type';
+import { Permissions } from '../iam/authorization/decorators/permissions.decorator';
 
 @ApiTags('Todo')
 @ApiBearerAuth()
@@ -23,6 +25,7 @@ import { Auth } from '../iam/authentication/decorators/auth.decorator';
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
+  @Permissions(Permission.CreateTodo)
   @Post()
   create(@Body() createTodoDto: CreateTodoDto) {
     return this.todoService.create(createTodoDto);

@@ -18,11 +18,13 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshTokenStorage } from '../../redis/refresh-token.storage';
 import { randomUUID } from 'crypto';
 import { InvalidatedRefreshTokenError } from '../../redis/invalidated-refresh-token.error';
+import { Role } from '../../role/entities/role.entity';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
@@ -35,6 +37,8 @@ export class AuthenticationService {
       const user = new User();
       user.email = signUpDto.email;
       user.password = await this.hashingService.hash(signUpDto.password);
+      const role = await this.rolesRepository.findOneBy({ id: 1 });
+      user.roles = [role];
       return this.usersRepository.save(user);
     } catch (err) {
       const pgUniqueViolationErrorCode = '23505';
@@ -46,8 +50,13 @@ export class AuthenticationService {
   }
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.usersRepository.findOneBy({
-      email: signInDto.email,
+    const user = await this.usersRepository.findOne({
+      where: {
+        email: signInDto.email,
+      },
+      relations: {
+        roles: true,
+      },
     });
     if (!user) {
       throw new UnauthorizedException('User does not exists');
@@ -73,8 +82,13 @@ export class AuthenticationService {
         issuer: this.jwtConfiguration.issuer,
       });
 
-      const user = await this.usersRepository.findOneByOrFail({
-        id: sub,
+      const user = await this.usersRepository.findOneOrFail({
+        where: {
+          id: sub,
+        },
+        relations: {
+          roles: true,
+        },
       });
 
       const isValid = await this.refreshTokenStorage.validate(
@@ -99,12 +113,17 @@ export class AuthenticationService {
   }
 
   async generateTokens(user: User) {
+    let permissions = [];
+    const roles = user.roles.map((item) => {
+      permissions = [...permissions, ...item.permissions];
+      return item.value;
+    });
     const refreshTokenId = randomUUID();
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
         user.id,
         this.jwtConfiguration.accessTokenTtl,
-        { email: user.email },
+        { email: user.email, roles, permissions },
       ),
       this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
         refreshTokenId,
